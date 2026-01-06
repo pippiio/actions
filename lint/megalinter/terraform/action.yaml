@@ -1,0 +1,100 @@
+---
+name: MegaLinter Terraform
+description: A MegaLinter.io Terraform flavour action
+author: pippi.io
+
+inputs:
+  disable:
+    description: List of disabled descriptors keys
+    required: false
+    default: SPELL
+
+  disable-linters:
+    description: List of disabled linters keys
+    required: false
+    default: ""
+
+  disable-errors-linters:
+    description: List of enabled but not blocking linters keys
+    required: false
+    default: ""
+
+  excluded-directories:
+    description: List of excluded directory basenames. They're excluded at any nested level.
+    required: false
+    default: ""
+
+  validate-all-codebase:
+    description: '"auto" = true on pull_request and push to main, false otherwise. Or force "true"/"false".'
+    required: false
+    default: "auto"
+
+outputs: {}
+
+runs:
+  using: composite
+  steps:
+    # Git Checkout
+    - name: Checkout Code
+      uses: actions/checkout@v6
+      with:
+        token: ${{ github.token }}
+        fetch-depth: >-
+          ${{
+            (
+              inputs['validate-all-codebase'] == 'true' ||
+              (
+                inputs['validate-all-codebase'] == 'auto' &&
+                (
+                  github.event_name == 'pull_request' ||
+                  (
+                    github.event_name == 'push' &&
+                    contains(fromJSON('["refs/heads/main","refs/heads/master"]'), github.ref)
+                  )
+                )
+              )
+            )
+            && 1 || 0
+          }}
+
+    # MegaLinter
+    - name: Terraform MegaLinter
+      id: ml
+      uses: oxsecurity/megalinter/flavors/terraform@v9
+      env:
+        # All available variables are described in documentation
+        # https://megalinter.io/configuration/
+        GITHUB_TOKEN: ${{ github.token }}
+        VALIDATE_ALL_CODEBASE: >-
+          ${{
+            inputs['validate-all-codebase'] == 'true' ||
+            (
+              inputs['validate-all-codebase'] == 'auto' &&
+              (
+                github.event_name == 'pull_request' ||
+                (
+                  github.event_name == 'push' &&
+                  contains(fromJSON('["refs/heads/main","refs/heads/master"]'), github.ref)
+                )
+              )
+            )
+          }}
+
+        DISABLE: ${{ inputs.disable }}
+        DISABLE_LINTERS: ${{ inputs['disable-linters'] }}
+        DISABLE_ERRORS_LINTERS: ${{ inputs['disable-errors-linters'] }}
+        EXCLUDED_DIRECTORIES: ${{ inputs['excluded-directories'] }}
+
+        LOG_FILE: mega-linter.log
+        LOG_LEVEL: WARN
+        PRINT_ALPACA: false
+
+    # Upload MegaLinter artifacts
+    - name: Upload MegaLinter reports
+      if: success() || failure()
+      uses: actions/upload-artifact@v6
+      with:
+        name: MegaLinter reports
+        path: |
+          megalinter-reports
+          mega-linter.log
