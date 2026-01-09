@@ -30,6 +30,11 @@ inputs:
     required: false
     default: "auto"
 
+  repository_kics_arguments:
+    description: 'User custom arguments to add in linter CLI call'
+    required: false
+    default: "--fail-on critical,high,medium"
+
 outputs: {}
 
 runs:
@@ -85,6 +90,7 @@ runs:
         DISABLE_LINTERS: ${{ inputs['disable-linters'] }}
         DISABLE_ERRORS_LINTERS: ${{ inputs['disable-errors-linters'] }}
         ADDITIONAL_EXCLUDED_DIRECTORIES: ${{ inputs['additional-excluded-directories'] }}
+        REPOSITORY_KICS_ARGUMENTS: ${{ inputs['repository_kics_arguments'] }}
 
         LOG_FILE: mega-linter.log
         LOG_LEVEL: WARN
