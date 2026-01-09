@@ -12,7 +12,8 @@ inputs:
   disable-linters:
     description: List of disabled linters keys
     required: false
-    default: ""
+    default: "TERRAFORM_TERRASCAN"
+    # Terrascan is archived and not working for newest terraform version: https://github.com/tenable/terrascan/discussions/1569
 
   disable-errors-linters:
     description: List of enabled but not blocking linters keys
