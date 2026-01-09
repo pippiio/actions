@@ -91,6 +91,9 @@ runs:
         DISABLE_ERRORS_LINTERS: ${{ inputs['disable-errors-linters'] }}
         ADDITIONAL_EXCLUDED_DIRECTORIES: ${{ inputs['additional-excluded-directories'] }}
         REPOSITORY_KICS_ARGUMENTS: ${{ inputs['repository_kics_arguments'] }}
+        
+        # Allow tflint to use github token for downloading terraform providers
+        TERRAFORM_TFLINT_UNSECURED_ENV_VARIABLES: GITHUB_TOKEN
 
         LOG_FILE: mega-linter.log
         LOG_LEVEL: WARN
