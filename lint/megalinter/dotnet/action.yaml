@@ -19,7 +19,7 @@ inputs:
     required: false
     default: ""
 
-  excluded-directories:
+  additional-excluded-directories:
     description: List of excluded directory basenames. They're excluded at any nested level.
     required: false
     default: ""
@@ -83,7 +83,7 @@ runs:
         DISABLE: ${{ inputs.disable }}
         DISABLE_LINTERS: ${{ inputs['disable-linters'] }}
         DISABLE_ERRORS_LINTERS: ${{ inputs['disable-errors-linters'] }}
-        EXCLUDED_DIRECTORIES: ${{ inputs['excluded-directories'] }}
+        ADDITIONAL_EXCLUDED_DIRECTORIES: ${{ inputs['additional-excluded-directories'] }}
 
         LOG_FILE: mega-linter.log
         LOG_LEVEL: WARN
