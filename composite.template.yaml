@@ -1,0 +1,40 @@
+---
+name: "My Composite Action" # required
+description: "Short description here" # required
+author: pippi.io
+
+inputs: # optional
+  example-input:
+    description: "What this input does" # required (when input exists)
+    required: false # optional
+    default: "default-value" # optional (string)
+    deprecationMessage: "Use new-input instead." # optional
+
+outputs: # optional (composite outputs require `value`)
+  example-output:
+    description: "What this output represents" # required (when output exists)
+    value: ${{ steps.some-step.outputs.some_key }} # required for composite outputs
+
+runs: # required
+  using: "composite" # required (must be 'composite')
+  steps: # required
+    - name: "Example run step" # optional
+      id: some-step # optional (use for references in contexts)
+      if: ${{ always() }} # optional
+      run: |
+        echo "some_key=some_value" >> "$GITHUB_OUTPUT"
+      shell: bash # required if `run` is set
+      env: # optional (step-scoped env)
+        EXAMPLE_ENV: "value"
+      working-directory: "." # optional
+      continue-on-error: false # optional
+
+    - name: "Example uses step" # optional
+      if: ${{ success() }} # optional
+      uses: actions/checkout@v5 # optional (a step is either `uses` or `run`)
+      with: # optional (depends on the action)
+        fetch-depth: 1
+      env: # optional
+        FOO: "bar"
+      working-directory: "." # optional (typically only relevant for `run`, but allowed)
+      continue-on-error: false # optional

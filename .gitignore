@@ -1,0 +1,45 @@
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --- Shell / Bash ---
+*.log
+
+# --- GitHub Actions runtime artifacts ---
+.env
+.env.*
+*.tmp
+*.bak
+
+# --- Secrets / credentials ---
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.env
+.env.secrets
+
+# --- Test / local scratch ---
+tmp/
+.tmp/
+scratch/
+.local/
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+
+# --- macOS symlink edge cases ---
+.AppleDouble
+.LSOverride
