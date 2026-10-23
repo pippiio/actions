@@ -1,0 +1,49 @@
+---
+name: Semantic Release
+description: Calculates the next semver version from Conventional Commits and creates a GitHub release
+author: pippi.io
+
+inputs:
+  dry-run:
+    description: Run without creating a tag or release, for testing
+    required: false
+    default: "false"
+
+outputs:
+  new-release-published:
+    description: Whether a new release was published
+    value: ${{ steps.semantic.outputs.new-release-published }}
+
+  new-release-version:
+    description: The version that was released
+    value: ${{ steps.semantic.outputs.new-release-version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v6
+      with:
+        token: ${{ github.token }}
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: "22"
+
+    - name: Run semantic-release
+      id: semantic
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        npm install --no-save \
+          semantic-release@25.0.9 \
+          @semantic-release/commit-analyzer@13.0.1 \
+          @semantic-release/release-notes-generator@14.0.3 \
+          @semantic-release/github@11.0.6 \
+          conventional-changelog-conventionalcommits@9.1.0
+        npx semantic-release \
+          --extends ${{ github.action_path }}/release.config.json \
+          ${{ inputs.dry-run == 'true' && '--dry-run' || '' }}
