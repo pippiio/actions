@@ -27,16 +27,23 @@ runs:
         token: ${{ github.token }}
         fetch-depth: 0
 
-
     - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
         node-version: "22"
-
 
     - name: Run semantic-release
       id: semantic
       shell: bash
       env:
         GITHUB_TOKEN: ${{ github.token }}
-      run: npx --yes semantic-release@25 --extends ${{ github.action_path }}/release.config.json
+      run: |
+        npx --yes \
+          --package semantic-release@25.0.9 \
+          --package @semantic-release/commit-analyzer@13.0.1 \
+          --package @semantic-release/release-notes-generator@14.0.3 \
+          --package @semantic-release/github@11.0.6 \
+          --package conventional-changelog-conventionalcommits@9.1.0 \
+          -- semantic-release \
+          --extends ${{ github.action_path }}/release.config.json \
+          ${{ inputs.dry-run == 'true' && '--dry-run' || '' }}
